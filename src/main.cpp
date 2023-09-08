@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <sstream>
 #include <cctype>
+#include <iterator>
 #include <chrono>
 #include <mutex>
 #include <thread>
@@ -40,7 +41,7 @@ void insertUserElement(const std::string notification_msg, T& input)
     std::cin>>input;
 }
 
-static CUSTOMER insertUserData(int id_)
+static CUSTOMER insertUserData(const int id_)
 {
     std::cout<<"Please enter the customer information\n";
 
@@ -73,14 +74,18 @@ int main(int argc, char** argv)
                 "Fetch the customer data [F], " 
                 "List all customers's data [L], "
                 "Save to CSV file [S]"<<std::endl;
-        
+
+        //refresh container at each cycle    
         mapping  = arch.getData();
+        //fetch console input
         std::cin>>userinput;
         switch (toupper(userinput))
         {
             case 'A':
             {
-                CUSTOMER new_cust = insertUserData();            
+                auto last_it = mapping.end();
+                auto idx = std::prev(mapping.end())->first;
+                CUSTOMER new_cust = insertUserData(idx+1);            
                 arch.add(new_cust);
                 break;
             }
