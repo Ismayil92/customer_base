@@ -5,6 +5,7 @@
 #include <memory>
 #include <map>
 #include <fstream>
+#include <sstream>
 #include "customer.h"
 #include "spdlog/spdlog.h"
 
@@ -24,7 +25,7 @@ class KundeArchive: public KundePrinter{
     protected:
        std::map<int, CUSTOMER> customer_dict;
        std::string storage_path;
-       std::fstream file;
+       std::fstream file_stream;
 
     public:
         KundeArchive();

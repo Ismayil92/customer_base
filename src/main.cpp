@@ -9,10 +9,6 @@
 #include <condition_variable>
 #include "kunde.hpp"
 
-static std::mutex mutex;
-static std::condition_variable cv;
-
- 
 
 static int fetchRequestID()
 {
@@ -40,20 +36,17 @@ static int fetchRequestID()
 template<typename T>
 void insertUserElement(const std::string notification_msg, T& input)
 {
-    std::unique_lock<std::mutex> lc{mutex};
     std::cout<<notification_msg;
     std::cin>>input;
-    lc.unlock();
 }
 
-static CUSTOMER insertUserData()
+static CUSTOMER insertUserData(int id_)
 {
-    static int id = 1;
     std::cout<<"Please enter the customer information\n";
 
     CUSTOMER customer;
 
-    customer.id = id;
+    customer.id = id_;
 
     insertUserElement<std::string>("Please enter the first name:", customer.first_name);
     insertUserElement<std::string>("Please enter the last name:", customer.last_name);
@@ -61,9 +54,9 @@ static CUSTOMER insertUserData()
     insertUserElement<std::string>("Please enter the city:", customer.city);
     insertUserElement<uint8_t>("Please enter the favourite color:", customer.favorite_color);
     
-    id++;
     return customer;    
 }
+
 
 int main(int argc, char** argv)
 {
