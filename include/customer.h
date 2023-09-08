@@ -2,7 +2,7 @@
 #define __DEFINED_CUSTOMER_H
 
 
-enum COLOR: uint8_t{
+enum COLOR{
     BLUE = 1,
     GREEN,
     VIOLET,
@@ -18,7 +18,7 @@ struct CUSTOMER{
     std::string last_name;
     std::string zip_code;
     std::string city;
-    uint8_t favorite_color;        
+    int favorite_color;        
 };
 
 #endif // ifndef __DEFINED_CUSTOMER_H

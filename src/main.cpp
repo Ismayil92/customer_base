@@ -53,7 +53,7 @@ static CUSTOMER insertUserData(const int id_)
     insertUserElement<std::string>("Please enter the last name:", customer.last_name);
     insertUserElement<std::string>("Please enter the zip code:", customer.zip_code);
     insertUserElement<std::string>("Please enter the city:", customer.city);
-    insertUserElement<uint8_t>("Please enter the favourite color:", customer.favorite_color);
+    insertUserElement<int>("Please enter the favourite color:", customer.favorite_color);
     
     return customer;    
 }
@@ -83,9 +83,8 @@ int main(int argc, char** argv)
         {
             case 'A':
             {
-                auto last_it = mapping.end();
-                auto idx = std::prev(mapping.end())->first;
-                CUSTOMER new_cust = insertUserData(idx+1);            
+                auto idx = arch.generateID(mapping);
+                CUSTOMER new_cust = insertUserData(idx);            
                 arch.add(new_cust);
                 break;
             }

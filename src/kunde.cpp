@@ -15,8 +15,16 @@ KundeArchive::KundeArchive(std::string csv_file_path): storage_path{csv_file_pat
         spdlog::error("CSV file not found!");
         std::exit(EXIT_FAILURE);
     }
-    this->loadFromCSV();
-    spdlog::info("CSV file successfully loaded..");
+
+    if(!this->isCSVEmpty())
+    {
+        this->loadFromCSV();
+        spdlog::info("CSV file successfully loaded..");
+    }
+    else{
+        spdlog::warn("CSV file is empty. You may add new customers!");
+    }
+    
 }
 
 KundeArchive::~KundeArchive()
@@ -54,6 +62,10 @@ void KundeArchive::saveToCSV()
         <<customer.city<<", "
         <<customer.favorite_color<<"\n";
     }   
+    if(file_stream.fail())
+    {
+        spdlog::info("Data successfully saved..");
+    }
 }
 
 
@@ -64,7 +76,8 @@ void KundeArchive::loadFromCSV()
     std::vector<std::string> columns;
     while(!file_stream.eof())
     {
-        columns.clear();
+        columns.clear();        
+        
         std::getline(file_stream, row, '\n');
         std::stringstream s{row};
         while(std::getline(s, word, ','))
@@ -72,14 +85,15 @@ void KundeArchive::loadFromCSV()
             columns.push_back(word);
         }
         CUSTOMER customer{
-                        .id = std::stoi(columns[0]),
-                        .first_name = columns[1],
-                        .last_name = columns[2],
-                        .zip_code = columns[3],
-                        .city = columns[4],
-                        .favorite_color = std::stoi(columns[5])};
+                            .id = std::stoi(columns[0]),
+                            .first_name = columns[1],
+                            .last_name = columns[2],
+                            .zip_code = columns[3],
+                            .city = columns[4],
+                            .favorite_color = std::stoi(columns[5])};
 
         customer_dict[stoi(columns[0])] = customer;
+        
     }
 }
 
@@ -89,6 +103,16 @@ void KundeArchive::setFilePath(std::string csv_file_path)
     storage_path = csv_file_path;
 }
 
+
+int KundeArchive::generateID(std::map<int, CUSTOMER>& container)  
+{
+    if(isCSVEmpty())
+    {
+        return 1; //burdan hemise 1 qayidir, cunki csv file a save olunmadigi ucun hemise 1 qayidir
+    }
+    auto idx = std::prev(customer_dict.end())->first;
+    return idx+2;
+}  
 
 void KundePrinter::printKundeDaten(const std::map<int, CUSTOMER>& customer_dict,
                                 const int _ID)
@@ -126,3 +150,6 @@ void KundePrinter::printKundeDaten(const std::map<int, CUSTOMER>& customer_dict)
                             customer.favorite_color);
    }  
 }
+
+
+

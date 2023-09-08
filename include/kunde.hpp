@@ -26,6 +26,7 @@ class KundeArchive: public KundePrinter{
        std::map<int, CUSTOMER> customer_dict;
        std::string storage_path;
        std::fstream file_stream;
+       
 
     public:
         KundeArchive();
@@ -41,7 +42,8 @@ class KundeArchive: public KundePrinter{
         CUSTOMER getCredentials(const int _ID)  {return  customer_dict[_ID]; }
         std::map<int, CUSTOMER>& getData()  {return customer_dict;}
         std::string getFilePath() const {return storage_path;}  
-          
+        bool isCSVEmpty(){ return file_stream.peek() == std::ifstream::traits_type::eof();}
+        int  generateID(std::map<int, CUSTOMER>& container); 
 };
 
 
