@@ -4,8 +4,10 @@
 #include <iostream>
 #include <memory>
 #include <map>
+#include <fstream>
 #include "customer.h"
 #include "spdlog/spdlog.h"
+
 
 
 class KundePrinter{
@@ -22,6 +24,7 @@ class KundeArchive: public KundePrinter{
     protected:
        std::map<int, CUSTOMER> customer_dict;
        std::string storage_path;
+       std::fstream file;
 
     public:
         KundeArchive();
@@ -31,6 +34,8 @@ class KundeArchive: public KundePrinter{
         KundeArchive& operator=(const KundeArchive& _arch) = delete;      
 
         void add(CUSTOMER& _new_customer);
+        void loadFromCSV();
+        void saveToCSV();
         void setFilePath(std::string csv_file_path);
         CUSTOMER getCredentials(const int _ID)  {return  customer_dict[_ID]; }
         std::map<int, CUSTOMER>& getData()  {return customer_dict;}

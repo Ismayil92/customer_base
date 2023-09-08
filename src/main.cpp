@@ -2,16 +2,17 @@
 #include <cstdlib>
 #include <algorithm>
 #include <sstream>
+#include <cctype>
+#include <chrono>
+#include <mutex>
+#include <thread>
+#include <condition_variable>
 #include "kunde.hpp"
 
+static std::mutex mutex;
+static std::condition_variable cv;
 
-static int calculateCustomerID()
-{
-    int id;
-
-    return id;
-}
-
+ 
 
 static int fetchRequestID()
 {
@@ -34,56 +35,65 @@ static int fetchRequestID()
     id = std::stoi(input);
     return id;
 }
-static CUSTOMER inputUserData(int id)
+
+
+template<typename T>
+void insertUserElement(const std::string notification_msg, T& input)
 {
+    std::unique_lock<std::mutex> lc{mutex};
+    std::cout<<notification_msg;
+    std::cin>>input;
+    lc.unlock();
+}
 
+static CUSTOMER insertUserData()
+{
+    static int id = 1;
     std::cout<<"Please enter the customer information\n";
-    CUSTOMER customer;
-    
-    customer.id = id;
-    std::cout<<"Please enter the first name:";
-    std::cin>>customer.first_name;
-    std::cout<<"Please enter the last name:";
-    std::cin>>customer.last_name;
-    std::cout<<"Please enter the zip code:"; 
-    std::cin>>customer.zip_code;
-    std::cout<<"Please enter the city:";
-    std::cin>>customer.city;
-    std::cout<<"Please enter the favorite color:";
-    std::cin>>customer.favorite_color;
 
+    CUSTOMER customer;
+
+    customer.id = id;
+
+    insertUserElement<std::string>("Please enter the first name:", customer.first_name);
+    insertUserElement<std::string>("Please enter the last name:", customer.last_name);
+    insertUserElement<std::string>("Please enter the zip code:", customer.zip_code);
+    insertUserElement<std::string>("Please enter the city:", customer.city);
+    insertUserElement<uint8_t>("Please enter the favourite color:", customer.favorite_color);
+    
+    id++;
     return customer;    
 }
 
-int main()
+int main(int argc, char** argv)
 {
     KundeArchive arch{"../resource/data.csv"};
+
     std::cout<<"Welcome to Console Appication!"<<std::endl;
     
     std::map<int, CUSTOMER> mapping;
     char userinput;
-    int id=0;
 
     while(true)
     {
         std::cout<<"Add new customer [A], "
                 "Fetch the customer data [F], " 
-                "List all customers's data [L]"<<std::endl;
+                "List all customers's data [L], "
+                "Save to CSV file [S]"<<std::endl;
         
         mapping  = arch.getData();
         std::cin>>userinput;
-        switch (userinput)
+        switch (toupper(userinput))
         {
             case 'A':
             {
-                id++;
-                CUSTOMER new_cust = inputUserData(id);            
+                CUSTOMER new_cust = insertUserData();            
                 arch.add(new_cust);
                 break;
             }
             case 'F':
             {
-                int request_id = fetchRequestID();          
+                int request_id = fetchRequestID();  //user input       
                 arch.printKundeDaten(mapping, request_id);
                 break;
             }
@@ -92,6 +102,10 @@ int main()
                 arch.printKundeDaten(mapping);
                 break;
             }
+            case 'S':
+                arch.saveToCSV();
+                break; 
+
             case 27:
             {
                 std::cout<<"Exit was requested\n";
@@ -102,6 +116,7 @@ int main()
                 continue;
             }
         }   
+        std::cin.clear();
         std::cout<<std::endl;     
     }
     
