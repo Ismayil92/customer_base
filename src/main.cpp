@@ -8,7 +8,28 @@
 #include <mutex>
 #include <thread>
 #include <condition_variable>
+#include <limits>
 #include "kunde.hpp"
+
+
+
+std::ostream& operator<<(std::ostream& cout, COLOR& color)
+{
+    return cout<<colors[static_cast<int>(color)];
+}
+
+std::istream& operator>>(std::istream& cin, COLOR& color)
+{
+    int i = std::numeric_limits<int>::max();
+    while(i>=COLOR::COUNT)
+    {
+        cin>>i;
+        if(i>=COLOR::COUNT)
+            spdlog::error("The entered value:{} is not acceptable! Please enter again..", i);        
+    }
+    color = static_cast<COLOR>(i);    
+    return cin; 
+}
 
 
 static int fetchRequestID()
@@ -48,12 +69,11 @@ static CUSTOMER insertUserData(const int id_)
     CUSTOMER customer;
 
     customer.id = id_;
-
     insertUserElement<std::string>("Please enter the first name:", customer.first_name);
     insertUserElement<std::string>("Please enter the last name:", customer.last_name);
     insertUserElement<std::string>("Please enter the zip code:", customer.zip_code);
     insertUserElement<std::string>("Please enter the city:", customer.city);
-    insertUserElement<int>("Please enter the favourite color:", customer.favorite_color);
+    insertUserElement<COLOR>("Please enter the favourite color:", customer.favorite_color);
     
     return customer;    
 }

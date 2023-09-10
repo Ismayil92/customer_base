@@ -1,15 +1,23 @@
 #ifndef __DEFINED_CUSTOMER_H
 #define __DEFINED_CUSTOMER_H
 
+static std::string colors[] = {"BLUE",
+                            "GREEN",
+                            "VIOLET",
+                            "RED",
+                            "YELLOW",
+                            "TURQOISE",
+                            "WHITE"};
 
 enum COLOR{
-    BLUE = 1,
+    BLUE = 0,
     GREEN,
     VIOLET,
     RED,
     YELLOW,
     TURQOISE,
-    WHITE
+    WHITE,
+    COUNT
 };
 
 struct CUSTOMER{
@@ -18,7 +26,7 @@ struct CUSTOMER{
     std::string last_name;
     std::string zip_code;
     std::string city;
-    int favorite_color;        
+    COLOR favorite_color;        
 };
 
 #endif // ifndef __DEFINED_CUSTOMER_H

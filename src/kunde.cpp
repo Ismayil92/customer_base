@@ -1,4 +1,6 @@
 #include "kunde.hpp"
+#include "spdlog/fmt/ostr.h"
+
 
 KundeArchive::KundeArchive()
 {
@@ -90,10 +92,9 @@ void KundeArchive::loadFromCSV()
                             .last_name = columns[2],
                             .zip_code = columns[3],
                             .city = columns[4],
-                            .favorite_color = std::stoi(columns[5])};
+                            .favorite_color = static_cast<COLOR>(std::stoi(columns[5]))};
 
-        customer_dict[stoi(columns[0])] = customer;
-        
+        customer_dict[stoi(columns[0])] = customer;        
     }
 }
 
@@ -106,12 +107,11 @@ void KundeArchive::setFilePath(std::string csv_file_path)
 
 int KundeArchive::generateID(std::map<int, CUSTOMER>& container)  
 {
-    if(isCSVEmpty())
-    {
-        return 1; //burdan hemise 1 qayidir, cunki csv file a save olunmadigi ucun hemise 1 qayidir
+    if(customer_dict.empty()){
+        return 1;
     }
     auto idx = std::prev(customer_dict.end())->first;
-    return idx+2;
+    return idx+1;
 }  
 
 void KundePrinter::printKundeDaten(const std::map<int, CUSTOMER>& customer_dict,
@@ -129,10 +129,10 @@ void KundePrinter::printKundeDaten(const std::map<int, CUSTOMER>& customer_dict,
     CUSTOMER cst {cst_it->second};
 
     spdlog::info("{},{},{},{},{}", cst.first_name,
-                                        cst.last_name,
-                                        cst.zip_code,
-                                        cst.city,
-                                        cst.favorite_color);           
+                                    cst.last_name,
+                                    cst.zip_code,
+                                    cst.city,
+                                    colors[cst.favorite_color]);           
 }
 
 
@@ -147,7 +147,7 @@ void KundePrinter::printKundeDaten(const std::map<int, CUSTOMER>& customer_dict)
                             customer.last_name,
                             customer.zip_code,
                             customer.city,
-                            customer.favorite_color);
+                            colors[customer.favorite_color]);
    }  
 }
 
