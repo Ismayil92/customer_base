@@ -21,12 +21,23 @@ std::ostream& operator<<(std::ostream& cout, COLOR& color)
 std::istream& operator>>(std::istream& cin, COLOR& color)
 {
     int i = std::numeric_limits<int>::max();
-
+    std::string input;
     while(i>=COLOR::COUNT)
-    {
-        cin>>i;
-        if(i>=COLOR::COUNT)
-            spdlog::error("The entered value:{} is not acceptable! Please enter again..", i);        
+    {   
+        cin>>input;
+        auto pos = input.find_first_not_of("0123456789");
+        if(pos != std::string::npos)     
+        {
+            spdlog::error("Input:{} is not a digit. Please enter again...", input);
+            continue;
+        }
+
+        i = std::stoi(input);    
+        
+        if(i>=COLOR::COUNT){
+            spdlog::error("The entered value:{} is not acceptable! Please enter again..", i);
+            continue;
+        }                            
     }
     color = static_cast<COLOR>(i);    
     return cin; 
@@ -60,7 +71,8 @@ template<typename T>
 void insertUserElement(const std::string notification_msg, T& input)
 {
     std::cout<<notification_msg;
-    std::cin>>input;
+    std::cin>>std::ws>>input; 
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  
 }
 
 static CUSTOMER insertUserData(const int id_)
