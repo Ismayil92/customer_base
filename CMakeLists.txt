@@ -7,6 +7,7 @@ set(SPDLOG_INCLUDE_DIR external/spdlog/include)
 
 find_package(Threads REQUIRED)
 
+enable_testing()
 
 add_executable(${PROJECT_NAME} src/main.cpp src/kunde.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -19,3 +20,6 @@ target_link_libraries(${PROJECT_NAME} Threads::Threads)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
+
+
+add_subdirectory(test)
