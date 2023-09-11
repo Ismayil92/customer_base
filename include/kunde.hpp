@@ -29,7 +29,6 @@ class KundeArchive: public KundePrinter{
        
 
     public:
-        KundeArchive();
         KundeArchive(std::string csv_file_path);
         ~KundeArchive();
         KundeArchive(const KundeArchive& _arch) = delete;
@@ -38,7 +37,6 @@ class KundeArchive: public KundePrinter{
         void add(CUSTOMER& _new_customer);
         void loadFromCSV();
         void saveToCSV();
-        void setFilePath(std::string csv_file_path);
         CUSTOMER getCredentials(const int _ID)  {return  customer_dict[_ID]; }
         std::map<int, CUSTOMER>& getData()  {return customer_dict;}
         std::string getFilePath() const {return storage_path;}  

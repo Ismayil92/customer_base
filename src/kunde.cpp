@@ -2,21 +2,15 @@
 #include "spdlog/fmt/ostr.h"
 
 
-KundeArchive::KundeArchive()
-{
-
-}
-
-
 KundeArchive::KundeArchive(std::string csv_file_path): storage_path{csv_file_path}
 {   
    
-    file_stream.open(csv_file_path, std::ios::app | std::ios::out | std::ios::in);
+    file_stream.open(csv_file_path, std::ios::in);
     if(!file_stream.is_open())
     {
         spdlog::error("CSV file not found!");
         std::exit(EXIT_FAILURE);
-    }
+    }    
 
     if(!this->isCSVEmpty())
     {
@@ -26,11 +20,15 @@ KundeArchive::KundeArchive(std::string csv_file_path): storage_path{csv_file_pat
     else{
         spdlog::warn("CSV file is empty. You may add new customers!");
     }
-    
+    file_stream.clear();
+    file_stream.close();
 }
 
 KundeArchive::~KundeArchive()
 {
+    std::cout.clear();
+    std::cin.clear();
+    file_stream.clear();
     file_stream.close();
 }
 
@@ -55,19 +53,31 @@ void KundeArchive::saveToCSV()
         spdlog::warn("Customer Archive is empty!");
         return;
     }
+
+    if(file_stream.is_open())
+    {
+        file_stream.close();
+    }
+
+    file_stream.open(storage_path, std::ios::out);  
     for (const auto& [id, customer] : customer_dict)
     {
-        file_stream<<customer.id<<", "
-        <<customer.first_name<<", "
-        <<customer.last_name<<", "
-        <<customer.zip_code<<", "
-        <<customer.city<<", "
-        <<customer.favorite_color<<"\n";
+            
+        file_stream<<customer.id<<","
+        <<customer.first_name<<","
+        <<customer.last_name<<","
+        <<customer.zip_code<<","
+        <<customer.city<<","
+        <<static_cast<int>(customer.favorite_color)<<'\n';            
+        
+        file_stream.flush();
     }   
-    if(file_stream.fail())
-    {
+    if(!file_stream.fail())
+    {           
         spdlog::info("Data successfully saved..");
-    }
+    }  
+    file_stream.clear();
+    file_stream.close();
 }
 
 
@@ -98,11 +108,6 @@ void KundeArchive::loadFromCSV()
     }
 }
 
-
-void KundeArchive::setFilePath(std::string csv_file_path)
-{
-    storage_path = csv_file_path;
-}
 
 
 int KundeArchive::generateID(std::map<int, CUSTOMER>& container)  

@@ -21,6 +21,7 @@ std::ostream& operator<<(std::ostream& cout, COLOR& color)
 std::istream& operator>>(std::istream& cin, COLOR& color)
 {
     int i = std::numeric_limits<int>::max();
+
     while(i>=COLOR::COUNT)
     {
         cin>>i;
@@ -87,9 +88,10 @@ int main(int argc, char** argv)
     
     std::map<int, CUSTOMER> mapping;
     char userinput;
-
+    
     while(true)
     {
+
         std::cout<<"Add new customer [A], "
                 "Fetch the customer data [F], " 
                 "List all customers's data [L], "
@@ -97,8 +99,11 @@ int main(int argc, char** argv)
 
         //refresh container at each cycle    
         mapping  = arch.getData();
-        //fetch console input
-        std::cin>>userinput;
+
+        //fetch console input               
+        std::cin.get(userinput);       
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
         switch (toupper(userinput))
         {
             case 'A':
@@ -133,6 +138,7 @@ int main(int argc, char** argv)
                 continue;
             }
         }   
+        std::cout.clear();
         std::cin.clear();
         std::cout<<std::endl;     
     }
