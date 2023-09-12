@@ -3,10 +3,10 @@
 To install:
 
  1. Clone the repo:
-$ git clone --recurse-submodules git@github.com:Ismayil92/customer_base.git
+	$ git clone --recurse-submodules git@github.com:Ismayil92/customer_base.git
 
 2. Enter the project's source directory:
-$ cd customer_base
+	$ cd customer_base
 
 3. Run build commands:
 
@@ -14,11 +14,18 @@ $ cd customer_base
     
     $ cmake --build ./build --config Release
 
+	$ cmake --install ./build --config Release
+
+
+4.Enter binary directory of the PROJECT:
+
+	$ cd build/bin
+
+
 4. Run the application:
-$ ./build/CustomerService -f ./resource/data.csv
+
+	$ ./CustomerService -f data.csv
 
 5. Test the application:
-
-    $ cd build/test
-    
+ 
     $ ./tester
