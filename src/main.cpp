@@ -9,9 +9,97 @@
 #include <thread>
 #include <condition_variable>
 #include <limits>
+#include "parser.hpp"
 #include "kunde.hpp"
 
 
+std::ostream& operator<<(std::ostream& cout, COLOR& color);
+std::istream& operator>>(std::istream& cin, COLOR& color);
+static int fetchRequestID();
+template<typename T>
+void insertUserElement(const std::string notification_msg, T& input);
+static CUSTOMER insertUserData(const int id_);
+
+
+
+int main(int argc, char** argv)
+{
+
+    ArgParser* parser = ArgParser::GetInstance();
+    try
+    {
+       parser->parse(argc, argv);
+       parser->help();
+    }
+    catch(const cxxopts::exceptions::exception e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+
+
+    KundeArchive arch{parser->getFilePath()};
+
+    std::cout<<"Welcome to Console Appication!"<<std::endl;
+    
+    std::map<int, CUSTOMER> mapping;
+    char userinput;
+    
+    while(true)
+    {
+
+        std::cout<<"Add new customer [A], "
+                "Fetch the customer data [F], " 
+                "List all customers's data [L], "
+                "Save to CSV file [S]"<<std::endl;
+
+        //refresh container at each cycle    
+        mapping  = arch.getData();
+
+        //fetch console input               
+        std::cin.get(userinput);       
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        switch (toupper(userinput))
+        {
+            case 'A':
+            {
+                auto idx = arch.generateID(mapping);
+                CUSTOMER new_cust = insertUserData(idx);            
+                arch.add(new_cust);
+                break;
+            }
+            case 'F':
+            {
+                int request_id = fetchRequestID();  //user input       
+                arch.printKundeDaten(mapping, request_id);
+                break;
+            }
+            case 'L':
+            {
+                arch.printKundeDaten(mapping);
+                break;
+            }
+            case 'S':
+                arch.saveToCSV();
+                break; 
+
+            case 27:
+            {
+                std::cout<<"Exit was requested\n";
+                return EXIT_SUCCESS;
+            }
+            default:
+            {
+                continue;
+            }
+        }   
+        std::cout.clear();
+        std::cin.clear();
+        std::cout<<std::endl;     
+    }
+    
+    return 0;
+}
 
 std::ostream& operator<<(std::ostream& cout, COLOR& color)
 {
@@ -89,71 +177,4 @@ static CUSTOMER insertUserData(const int id_)
     insertUserElement<COLOR>("Please enter the favourite color:", customer.favorite_color);
     
     return customer;    
-}
-
-
-int main(int argc, char** argv)
-{
-    KundeArchive arch{"../resource/data.csv"};
-
-    std::cout<<"Welcome to Console Appication!"<<std::endl;
-    
-    std::map<int, CUSTOMER> mapping;
-    char userinput;
-    
-    while(true)
-    {
-
-        std::cout<<"Add new customer [A], "
-                "Fetch the customer data [F], " 
-                "List all customers's data [L], "
-                "Save to CSV file [S]"<<std::endl;
-
-        //refresh container at each cycle    
-        mapping  = arch.getData();
-
-        //fetch console input               
-        std::cin.get(userinput);       
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        switch (toupper(userinput))
-        {
-            case 'A':
-            {
-                auto idx = arch.generateID(mapping);
-                CUSTOMER new_cust = insertUserData(idx);            
-                arch.add(new_cust);
-                break;
-            }
-            case 'F':
-            {
-                int request_id = fetchRequestID();  //user input       
-                arch.printKundeDaten(mapping, request_id);
-                break;
-            }
-            case 'L':
-            {
-                arch.printKundeDaten(mapping);
-                break;
-            }
-            case 'S':
-                arch.saveToCSV();
-                break; 
-
-            case 27:
-            {
-                std::cout<<"Exit was requested\n";
-                return EXIT_SUCCESS;
-            }
-            default:
-            {
-                continue;
-            }
-        }   
-        std::cout.clear();
-        std::cin.clear();
-        std::cout<<std::endl;     
-    }
-    
-    return 0;
 }

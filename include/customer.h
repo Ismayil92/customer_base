@@ -51,6 +51,8 @@ struct CUSTOMER{
     std::string city;
     COLOR favorite_color;        
 };
+
+
 #endif // __cplusplus
 
 
