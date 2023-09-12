@@ -21,7 +21,7 @@ target_include_directories(tester PRIVATE
 ../include 
 ../external/spdlog/include)
 
-
 include(GoogleTest)
 gtest_discover_tests(tester)
 
+install(TARGETS tester RUNTIME DESTINATION bin)
